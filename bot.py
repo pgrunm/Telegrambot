@@ -5,6 +5,9 @@
 """
 import logging
 import re
+import sched
+import time
+from datetime import time
 
 import certifi
 import urllib3
@@ -18,22 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 def start(bot, update):
-    keyboard = [[InlineKeyboardButton("Option 1", callback_data='1'),
-                 InlineKeyboardButton("Option 2", callback_data='2')],
-
-                [InlineKeyboardButton("Option 3", callback_data='3')]]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    update.message.reply_text('Please choose:', reply_markup=reply_markup)
-
-
-def button(bot, update):
-    query = update.callback_query
-
-    bot.edit_message_text(text="Selected option: {}".format(query.data),
-                          chat_id=query.message.chat_id,
-                          message_id=query.message.message_id)
+    update.message.reply_text("Welcome!")
 
 
 def help(bot, update):
@@ -53,9 +41,8 @@ def echo(bot, update):
     /help''')
 
 
-def packt(bot, update):
-    """Displays the title and the url to the latest free ebook of packtpub"""
-
+def parse_today_ebook():
+    """Returns the current ebook from packtpub"""
     # Search for any big Header and return it
     pattern = re.compile(r'<h1>(.+)<\/h1><\/div>')
 
@@ -71,8 +58,23 @@ def packt(bot, update):
 
     # Extracting the book title with some lovely regex.
     book_title = pattern.findall(str(r.data))
+    return book_title[0]
+
+
+def packt(bot, update):
+    """Displays the title and the url to the latest free ebook of packtpub"""
+    book_title = parse_today_ebook()
+
     update.message.reply_text(
-        'The today\'s book is: {}. Find it at {}'.format(book_title[0], source_url_from_packt))
+        'The today\'s book is: {}. Find it at https://www.packtpub.com/packt/offers/free-learning'.format(book_title))
+
+
+def packt_scheduled(bot, job):
+    """Displays the title and the url to the latest free ebook of packtpub"""
+
+    book_title = parse_today_ebook()
+    bot.send_message(chat_id=349463555, text='The today\'s book is: {}. Find it at https://www.packtpub.com/packt/offers/free-learning'.format(
+        book_title))
 
 
 def main():
@@ -80,11 +82,14 @@ def main():
     updater = Updater("614151885:AAHqxtafQx-5aYP8U1zRB9oEgXTzZ2Awx1M")
 
     updater.dispatcher.add_handler(CommandHandler('start', start))
-    updater.dispatcher.add_handler(CallbackQueryHandler(button))
     updater.dispatcher.add_handler(CommandHandler('help', help))
     updater.dispatcher.add_handler(CommandHandler('packt', packt))
     updater.dispatcher.add_handler(MessageHandler(Filters.text, echo))
     updater.dispatcher.add_error_handler(error)
+
+    # Adding a scheduled message at 3 o'clock in the morning to notify about the current latest book
+    j = updater.job_queue
+    j.run_daily(packt_scheduled, time(3, 0))
 
     # Start the Bot
     updater.start_polling()

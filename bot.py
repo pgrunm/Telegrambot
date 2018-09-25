@@ -4,8 +4,13 @@
 # This program is dedicated to the public domain under the CC0 license.
 """
 import logging
+import re
+
+import certifi
+import urllib3
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
+from telegram.ext import (CallbackQueryHandler, CommandHandler, Filters,
+                          MessageHandler, Updater)
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -42,14 +47,32 @@ def error(bot, update, error):
 
 def echo(bot, update):
     """Echo the user message."""
-    update.message.reply_text(update.message.text)
-
-# Adding the Command: /packt
+    update.message.reply_text('''Available commands:
+    /start
+    /packt
+    /help''')
 
 
 def packt(bot, update):
     """Displays the title and the url to the latest free ebook of packtpub"""
-    update.message.reply_text("Under construction.")
+
+    # Search for any big Header and return it
+    pattern = re.compile(r'<h1>(.+)<\/h1><\/div>')
+
+    # Avoiding https warnings by checking the tls certificate.
+    http = urllib3.PoolManager(
+        cert_reqs='CERT_REQUIRED',
+        ca_certs=certifi.where())
+    source_url_from_packt = 'https://www.packtpub.com/packt/offers/free-learning'
+
+    # Requesting the web page
+    r = http.request(
+        'GET', source_url_from_packt)
+
+    # Extracting the book title with some lovely regex.
+    book_title = pattern.findall(str(r.data))
+    update.message.reply_text(
+        'The today\'s book is: {}. Find it at {}'.format(book_title[0], source_url_from_packt))
 
 
 def main():

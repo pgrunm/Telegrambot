@@ -58,23 +58,24 @@ def parse_today_ebook():
 
     # Extracting the book title with some lovely regex.
     book_title = pattern.findall(str(r.data))
-    return book_title[0]
+    str_to_return = 'The today\'s book is: {}. Find it at {}'.format(
+        book_title[0], source_url_from_packt)
+    return str_to_return
 
 
 def packt(bot, update):
     """Displays the title and the url to the latest free ebook of packtpub"""
-    book_title = parse_today_ebook()
-
-    update.message.reply_text(
-        'The today\'s book is: {}. Find it at https://www.packtpub.com/packt/offers/free-learning'.format(book_title))
+    message = parse_today_ebook()
+    # Send the reply message
+    update.message.reply_text(message)
 
 
 def packt_scheduled(bot, job):
     """Displays the title and the url to the latest free ebook of packtpub"""
 
-    book_title = parse_today_ebook()
-    bot.send_message(chat_id=349463555, text='The today\'s book is: {}. Find it at https://www.packtpub.com/packt/offers/free-learning'.format(
-        book_title))
+    message = parse_today_ebook()
+    # Send the reply message
+    bot.send_message(chat_id=349463555, text=message)
 
 
 def main():

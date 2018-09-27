@@ -3,6 +3,7 @@
 """Basic example for a bot that uses inline keyboards.
 # This program is dedicated to the public domain under the CC0 license.
 """
+import configparser
 import logging
 import re
 import sched
@@ -79,8 +80,12 @@ def packt_scheduled(bot, job):
 
 
 def main():
+    # Reading the API token from the bot.ini file
+    config = configparser.ConfigParser()
+    config.read('bot.ini')
+
     # Create the Updater and pass it your bot's token.
-    updater = Updater("614151885:AAHqxtafQx-5aYP8U1zRB9oEgXTzZ2Awx1M")
+    updater = Updater(config['API']['Token'])
 
     updater.dispatcher.add_handler(CommandHandler('start', start))
     updater.dispatcher.add_handler(CommandHandler('help', help))

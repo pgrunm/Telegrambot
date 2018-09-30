@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Basic example for a bot that uses inline keyboards.
-# This program is dedicated to the public domain under the CC0 license.
-"""
 import configparser
 import json
 import logging
@@ -86,16 +83,20 @@ def packt_scheduled(bot, job):
 
 
 def joke(bot, update):
-    """Handle the inline query."""
+    """Handle the inline query when mentioning the bot and return a joke."""
+    
+    # Load the jokes from the locally downloaded file
     file = open('data.json')
     data = json.load(file)['jokes']
 
+    # Choose a random joke and format it accordingly 
     joke = random.choice(list(data))
     reply = 'Titel: {}\n{}'.format(joke['Titel'], joke['Text'])
     query = update.inline_query.query
     if not query:
         return
     results = list()
+    # Prepare the result and send it.
     results.append(
         InlineQueryResultArticle(
             id=query,

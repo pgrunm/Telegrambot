@@ -4,17 +4,23 @@
 # This program is dedicated to the public domain under the CC0 license.
 """
 import configparser
+import json
 import logging
+import random
 import re
 import sched
 import time
 from datetime import time
+from uuid import uuid4
 
 import certifi
 import urllib3
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import (InlineKeyboardButton, InlineKeyboardMarkup,
+                      InlineQueryResultArticle, InputTextMessageContent,
+                      ParseMode)
 from telegram.ext import (CallbackQueryHandler, CommandHandler, Filters,
-                          MessageHandler, Updater)
+                          InlineQueryHandler, MessageHandler, Updater)
+from telegram.utils.helpers import escape_markdown
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -79,6 +85,27 @@ def packt_scheduled(bot, job):
     bot.send_message(chat_id=349463555, text=message)
 
 
+def joke(bot, update):
+    """Handle the inline query."""
+    file = open('data.json')
+    data = json.load(file)['jokes']
+
+    joke = random.choice(list(data))
+    reply = 'Titel: {}\n{}'.format(joke['Titel'], joke['Text'])
+    query = update.inline_query.query
+    if not query:
+        return
+    results = list()
+    results.append(
+        InlineQueryResultArticle(
+            id=query,
+            title=joke['Titel'],
+            input_message_content=(InputTextMessageContent(reply))
+        )
+    )
+    bot.answer_inline_query(update.inline_query.id, results)
+
+
 def main():
     # Reading the API token from the bot.ini file
     config = configparser.ConfigParser()
@@ -90,7 +117,11 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('start', start))
     updater.dispatcher.add_handler(CommandHandler('help', help))
     updater.dispatcher.add_handler(CommandHandler('packt', packt))
-    updater.dispatcher.add_handler(MessageHandler(Filters.text, echo))
+
+    # Adding the inline ability for jokes
+    updater.dispatcher.add_handler(InlineQueryHandler(joke))
+
+    # updater.dispatcher.add_handler(MessageHandler(Filters.text, echo))
     updater.dispatcher.add_error_handler(error)
 
     # Adding a scheduled message at 3 o'clock in the morning to notify about the current latest book

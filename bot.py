@@ -121,7 +121,9 @@ def main():
     # Adding the inline ability for jokes
     updater.dispatcher.add_handler(InlineQueryHandler(joke))
 
-    # updater.dispatcher.add_handler(MessageHandler(Filters.text, echo))
+    # Adding the reply for unknown messages
+    updater.dispatcher.add_handler(MessageHandler(Filters.text, echo))
+
     updater.dispatcher.add_error_handler(error)
 
     # Adding a scheduled message at 3 o'clock in the morning to notify about the current latest book

@@ -10,8 +10,7 @@ import time
 from datetime import time
 from uuid import uuid4
 
-import certifi
-import urllib3
+import requests
 from telegram import (InlineKeyboardButton, InlineKeyboardMarkup,
                       InlineQueryResultArticle, InputTextMessageContent,
                       ParseMode)
@@ -50,18 +49,15 @@ def parse_today_ebook():
     # Search for any big Header and return it
     pattern = re.compile(r'<h1>(.+)<\/h1><\/div>')
 
-    # Avoiding https warnings by checking the tls certificate.
-    http = urllib3.PoolManager(
-        cert_reqs='CERT_REQUIRED',
-        ca_certs=certifi.where())
+    # Packt source URL
     source_url_from_packt = 'https://www.packtpub.com/packt/offers/free-learning'
 
     # Requesting the web page
-    r = http.request(
-        'GET', source_url_from_packt)
+    headers = {'User-Agent':'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0'}
+    r = requests.get(source_url_from_packt, headers=headers)
 
     # Extracting the book title with some lovely regex.
-    book_title = pattern.findall(str(r.data))
+    book_title = pattern.findall(str(r.text))
     str_to_return = 'The today\'s book is: {}. Find it at {}'.format(
         book_title[0], source_url_from_packt)
     return str_to_return
@@ -84,12 +80,12 @@ def packt_scheduled(bot, job):
 
 def joke(bot, update):
     """Handle the inline query when mentioning the bot and return a joke."""
-    
+
     # Load the jokes from the locally downloaded file
     file = open('data.json')
     data = json.load(file)['jokes']
 
-    # Choose a random joke and format it accordingly 
+    # Choose a random joke and format it accordingly
     joke = random.choice(list(data))
     reply = 'Titel: {}\n{}'.format(joke['Titel'], joke['Text'])
     query = update.inline_query.query

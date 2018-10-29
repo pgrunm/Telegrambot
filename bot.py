@@ -53,7 +53,8 @@ def parse_today_ebook():
     source_url_from_packt = 'https://www.packtpub.com/packt/offers/free-learning'
 
     # Requesting the web page
-    headers = {'User-Agent':'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0'}
+    headers = {
+        'User-Agent': 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0'}
     r = requests.get(source_url_from_packt, headers=headers)
 
     # Extracting the book title with some lovely regex.
@@ -123,9 +124,9 @@ def main():
 
     updater.dispatcher.add_error_handler(error)
 
-    # Adding a scheduled message at 3 o'clock in the morning to notify about the current latest book
+    # Adding a scheduled message at 4 o'clock to notify about the latest book
     j = updater.job_queue
-    j.run_daily(packt_scheduled, time(3, 0))
+    j.run_daily(packt_scheduled, time(4, 0))
 
     # Start the Bot
     updater.start_polling()

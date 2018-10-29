@@ -76,7 +76,7 @@ def packt_scheduled(bot, job):
 
     message = parse_today_ebook()
     # Send the reply message
-    bot.send_message(chat_id=349463555, text=message)
+    bot.send_message(chat_id=-112906790, text=message)
 
 
 def joke(bot, update):

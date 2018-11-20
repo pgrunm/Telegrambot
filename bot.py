@@ -7,7 +7,7 @@ import random
 import re
 import sched
 import time
-from datetime import time
+from datetime import datetime, time, timedelta
 from uuid import uuid4
 
 import requests
@@ -53,7 +53,8 @@ def parse_today_ebook():
     source_url_from_packt = 'https://www.packtpub.com/packt/offers/free-learning'
 
     # Requesting the web page
-    headers = {'User-Agent':'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0'}
+    headers = {
+        'User-Agent': 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0'}
     r = requests.get(source_url_from_packt, headers=headers)
 
     # Extracting the book title with some lovely regex.
@@ -103,6 +104,50 @@ def joke(bot, update):
     bot.answer_inline_query(update.inline_query.id, results)
 
 
+def number_to_unicode(number):
+    '''
+    Converting a digit into a unicode number smiley.
+    See more at https://unicode.org/emoji/charts/full-emoji-list.html#keycap.
+    '''
+    unicode_numbers = {
+        0: u'0️⃣',
+        1: u'1️⃣',
+        2: u'2️⃣',
+        3: u'3️⃣',
+        4: u'4️⃣',
+        5: u'5️⃣',
+        6: u'6️⃣',
+        7: u'7️⃣',
+        8: u'8️⃣',
+        9: u'9️⃣',
+    }
+    number_for_return = u''
+
+    # In case of a negative number:
+    if number < 0:
+        number *= -1
+
+    while number != 0:
+        number_for_return = unicode_numbers[number % 10] + number_for_return
+        number = int(number / 10)
+
+    return number_for_return
+
+
+def timeleft(bot, update):
+    arrival_time = datetime(2018, 12, 22, 18, 0)
+    d = arrival_time - datetime.now()
+
+    # Getting the hours
+    hours = d.seconds / 3600
+    minutes = d.seconds % 3600 / 60
+    seconds = (minutes - int(minutes)) * 60
+
+    msg = 'Bis zum 22. Dezember um 18 Uhr sind es noch: {} Tage, {} Stunden, {} Minuten und {} Sekunden.'.format(
+        number_to_unicode(d.days), number_to_unicode(int(hours)), number_to_unicode(int(minutes)), number_to_unicode(int(seconds)))
+    update.message.reply_text(msg)
+
+
 def main():
     # Reading the API token from the bot.ini file
     config = configparser.ConfigParser()
@@ -114,6 +159,9 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('start', start))
     updater.dispatcher.add_handler(CommandHandler('help', help))
     updater.dispatcher.add_handler(CommandHandler('packt', packt))
+
+    # Adding the Timeleft function.
+    updater.dispatcher.add_handler(CommandHandler('time', timeleft))
 
     # Adding the inline ability for jokes
     updater.dispatcher.add_handler(InlineQueryHandler(joke))

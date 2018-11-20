@@ -76,7 +76,7 @@ def packt_scheduled(bot, job):
 
     message = parse_today_ebook()
     # Send the reply message
-    bot.send_message(chat_id=349463555, text=message)
+    bot.send_message(chat_id=-112906790, text=message)
 
 
 def joke(bot, update):
@@ -171,9 +171,9 @@ def main():
 
     updater.dispatcher.add_error_handler(error)
 
-    # Adding a scheduled message at 3 o'clock in the morning to notify about the current latest book
+    # Adding a scheduled message at 4 o'clock to notify about the latest book
     j = updater.job_queue
-    j.run_daily(packt_scheduled, time(3, 0))
+    j.run_daily(packt_scheduled, time(4, 0))
 
     # Start the Bot
     updater.start_polling()

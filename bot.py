@@ -18,6 +18,8 @@ from telegram.ext import (CallbackQueryHandler, CommandHandler, Filters,
                           InlineQueryHandler, MessageHandler, Updater)
 from telegram.utils.helpers import escape_markdown
 
+from bot_functions import number_to_unicode
+
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -102,36 +104,6 @@ def joke(bot, update):
         )
     )
     bot.answer_inline_query(update.inline_query.id, results)
-
-
-def number_to_unicode(number):
-    '''
-    Converting a digit into a unicode number smiley.
-    See more at https://unicode.org/emoji/charts/full-emoji-list.html#keycap.
-    '''
-    unicode_numbers = {
-        0: u'0️⃣',
-        1: u'1️⃣',
-        2: u'2️⃣',
-        3: u'3️⃣',
-        4: u'4️⃣',
-        5: u'5️⃣',
-        6: u'6️⃣',
-        7: u'7️⃣',
-        8: u'8️⃣',
-        9: u'9️⃣',
-    }
-    number_for_return = u''
-
-    # In case of a negative number:
-    if number < 0:
-        number *= -1
-
-    while number != 0:
-        number_for_return = unicode_numbers[number % 10] + number_for_return
-        number = int(number / 10)
-
-    return number_for_return
 
 
 def timeleft(bot, update):

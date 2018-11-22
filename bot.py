@@ -4,13 +4,11 @@ import configparser
 import json
 import logging
 import random
-import re
 import sched
 import time
 from datetime import datetime, time, timedelta
 from uuid import uuid4
 
-import requests
 from telegram import (InlineKeyboardButton, InlineKeyboardMarkup,
                       InlineQueryResultArticle, InputTextMessageContent,
                       ParseMode)
@@ -18,7 +16,7 @@ from telegram.ext import (CallbackQueryHandler, CommandHandler, Filters,
                           InlineQueryHandler, MessageHandler, Updater)
 from telegram.utils.helpers import escape_markdown
 
-from bot_functions import number_to_unicode
+from bot_functions import number_to_unicode, parse_today_ebook
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -44,26 +42,6 @@ def echo(bot, update):
     /start
     /packt
     /help''')
-
-
-def parse_today_ebook():
-    """Returns the current ebook from packtpub"""
-    # Search for any big Header and return it
-    pattern = re.compile(r'<h1>(.+)<\/h1><\/div>')
-
-    # Packt source URL
-    source_url_from_packt = 'https://www.packtpub.com/packt/offers/free-learning'
-
-    # Requesting the web page
-    headers = {
-        'User-Agent': 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0'}
-    r = requests.get(source_url_from_packt, headers=headers)
-
-    # Extracting the book title with some lovely regex.
-    book_title = pattern.findall(str(r.text))
-    str_to_return = 'The today\'s book is: {}. Find it at {}'.format(
-        book_title[0], source_url_from_packt)
-    return str_to_return
 
 
 def packt(bot, update):

@@ -85,7 +85,7 @@ def joke(bot, update):
 
 
 def timeleft(bot, update):
-    arrival_time = datetime(2018, 12, 22, 18, 0)
+    arrival_time = datetime(2019, 1, 16, 12, 0)
     d = arrival_time - datetime.now()
 
     # Getting the hours
@@ -93,7 +93,7 @@ def timeleft(bot, update):
     minutes = d.seconds % 3600 / 60
     seconds = (minutes - int(minutes)) * 60
 
-    msg = 'Bis zum 22. Dezember um 18 Uhr sind es noch: {} Tage, {} Stunden, {} Minuten und {} Sekunden.'.format(
+    msg = 'Bis zum 16. Januar um 12 Uhr sind es noch: {} Tage, {} Stunden, {} Minuten und {} Sekunden.'.format(
         number_to_unicode(d.days), number_to_unicode(int(hours)), number_to_unicode(int(minutes)), number_to_unicode(int(seconds)))
     update.message.reply_text(msg)
 

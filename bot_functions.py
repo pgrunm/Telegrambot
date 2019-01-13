@@ -20,12 +20,14 @@ def number_to_unicode(number):
         9: u'9️⃣',
     }
     number_for_return = u''
+    negative_numbers = False
 
     # Verify the given number is really only a number
     if isinstance(number, int):
         # In case of a negative number:
         if number < 0:
             number *= -1
+            negative_numbers = True
         elif number == 0:
             number_for_return = unicode_numbers[number]
     else:
@@ -35,6 +37,8 @@ def number_to_unicode(number):
         number_for_return = unicode_numbers[number % 10] + number_for_return
         number = int(number / 10)
 
+    if negative_numbers == True:
+        number_for_return = '➖' + number_for_return
     return number_for_return
 
 

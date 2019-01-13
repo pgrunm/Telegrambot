@@ -20,6 +20,8 @@ def number_to_unicode(number):
         9: u'9️⃣',
     }
     number_for_return = u''
+
+    # If there is a negative number, set this to true
     negative_numbers = False
 
     # Verify the given number is really only a number

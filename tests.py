@@ -18,12 +18,15 @@ class telegramBotFunctionTests(unittest.TestCase):
         with self.assertRaises(TypeError):
             number_to_unicode('abc')
 
+<<<<<<< HEAD
     def test_negative_number(self):
         # Function should return a minus sign
         # ➖
         # self.assertIn(number_to_unicode(-123), '➖')
         self.assertEqual(number_to_unicode(-123), '➖1️⃣2️⃣3️⃣')
 
+=======
+>>>>>>> d2c4fb1993db0637a0bf7dc20e077e1ae9777b3e
 
 if __name__ == '__main__':
     unittest.main()

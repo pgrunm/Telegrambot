@@ -21,15 +21,21 @@ def number_to_unicode(number):
     }
     number_for_return = u''
 
+<<<<<<< HEAD
     # If there is a negative number, set this to true
     negative_numbers = False
 
+=======
+>>>>>>> d2c4fb1993db0637a0bf7dc20e077e1ae9777b3e
     # Verify the given number is really only a number
     if isinstance(number, int):
         # In case of a negative number:
         if number < 0:
             number *= -1
+<<<<<<< HEAD
             negative_numbers = True
+=======
+>>>>>>> d2c4fb1993db0637a0bf7dc20e077e1ae9777b3e
         elif number == 0:
             number_for_return = unicode_numbers[number]
     else:
@@ -39,8 +45,11 @@ def number_to_unicode(number):
         number_for_return = unicode_numbers[number % 10] + number_for_return
         number = int(number / 10)
 
+<<<<<<< HEAD
     if negative_numbers == True:
         number_for_return = '➖' + number_for_return
+=======
+>>>>>>> d2c4fb1993db0637a0bf7dc20e077e1ae9777b3e
     return number_for_return
 
 

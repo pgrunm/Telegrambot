@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import configparser
 import json
 import logging
+import os
 import random
 import sched
 import time
@@ -101,11 +101,11 @@ def timeleft(bot, update):
 
 def main():
     # Reading the API token from the bot.ini file
-    config = configparser.ConfigParser()
-    config.read('bot.ini')
 
     # Create the Updater and pass it your bot's token.
-    updater = Updater(config['API']['Token'])
+    updater = Updater(os.environ['tg_api_key'])
+    print('Bot startet with API key {api_key}.'.format(
+        api_key=os.environ['tg_api_key']))
 
     updater.dispatcher.add_handler(CommandHandler('start', start))
     updater.dispatcher.add_handler(CommandHandler('help', help))

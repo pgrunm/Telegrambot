@@ -1,0 +1,13 @@
+# Stuff we dont need in our container
+
+# Files
+data.json
+LICENSE
+README.md
+DOCKERFILE
+
+# Directories
+venv/*
+.vscode/*
+__pycache__/*
+.git/*
